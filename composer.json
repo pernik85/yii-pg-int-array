@@ -1,0 +1,23 @@
+{
+  "name": "aPernikuza/yii-pg-int-array",
+  "description": "преобразовывает значения атрибутов, с типом данных массива (int[]) из PostgreSQL в массив со значениями для PHP и наоборот.",
+  "license": "proprietary",
+  "version": "1.0.0",
+  "authors": [
+    {
+      "name": "Alexandr Pernikuza",
+      "email": "pernik2@mail.ru"
+    }
+  ],
+  "require": {
+    "php": ">=5.3"
+  },
+  "require-dev":{
+    "phpunit/phpunit": "4.0.0"
+  },
+  "autoload":{
+    "psr-4":{
+      "src\\yiiPgIntArrayActiveRecord\\":""
+    }
+  }
+}
