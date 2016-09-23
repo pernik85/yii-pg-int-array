@@ -76,14 +76,23 @@ class yiiPgIntArrayActiveRecordTest extends PHPUnit_Framework_TestCase
     }
 
 
-    public function test_pgIntegerArrayValidator_goodParams(){
+    /**
+     * @dataProvider provider_pgIntegerArrayValidator_goodParams
+     */
+    public function test_pgIntegerArrayValidator_goodParams($paramsAttribute){
         $attribute = 'arrayInteger';
-        $params = array(1, 5);
         $this->yiiPgIntArrayActiveRecord->expects($this->never())
             ->method('addError');
 
-        $this->yiiPgIntArrayActiveRecord->$attribute = $params;
-        $this->assertEquals(null, $this->yiiPgIntArrayActiveRecord->pgIntegerArrayValidator($attribute, $params));
+        $this->yiiPgIntArrayActiveRecord->$attribute = $paramsAttribute;
+        $this->assertEquals(null, $this->yiiPgIntArrayActiveRecord->pgIntegerArrayValidator($attribute, array('allowEmpty' => true)));
+    }
+
+    public function provider_pgIntegerArrayValidator_goodParams(){
+        return array(
+            array(''),
+            array(array(5,91))
+        );
     }
 
 }

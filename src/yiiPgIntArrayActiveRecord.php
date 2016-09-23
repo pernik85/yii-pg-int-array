@@ -1,7 +1,9 @@
 <?php
+/**
+ * Class yiiPgIntArrayActiveRecord росширяет CActiveRecord для работы с int[] PostgreSQL
+ */
 
-
-class yiiPgIntArrayActiveRecord
+class yiiPgIntArrayActiveRecord extends CActiveRecord
 {
 
     /**
@@ -53,18 +55,21 @@ class yiiPgIntArrayActiveRecord
         if (isset($params['allowEmpty']) && is_bool($params['allowEmpty'])) {
             $allowEmpty = $params['allowEmpty'];
         }
-        if (!is_array($this->$attribute)  && !$allowEmpty){
+        if (!empty($this->$attribute) && !is_array($this->$attribute)){
             $this->addError($attribute, 'Это не Массив');
         }
-        if(empty($this->$attribute)){
+        if(empty($this->$attribute) && !$allowEmpty){
             $this->addError($attribute, 'Масив Пуст');
         }
-        foreach($this->$attribute as  $value) {
-            if(!is_int($value)){
-                $this->addError($attribute, 'Масив содержит не понятные каракули');
-                break;
+        if (!empty($this->$attribute)){
+            foreach($this->$attribute as  $value) {
+                if(!is_int($value)){
+                    $this->addError($attribute, 'Масив содержит не понятные каракули');
+                    break;
+                }
             }
         }
+
     }
 
 }
