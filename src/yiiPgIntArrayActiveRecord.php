@@ -1,4 +1,5 @@
 <?php
+namespace pernik85\yiiPgIntArray;
 /**
  * Class yiiPgIntArrayActiveRecord росширяет CActiveRecord для работы с int[] PostgreSQL
  */
