@@ -34,8 +34,8 @@ class PgIntegerArrayValidator extends CValidator
 
         foreach($value as  $val) {
             if(!is_int($val)){
-               // $message = $this->errorArray = $this->errorArray !== null ? $this->errorArray : Yii::t('yii','{attribute} содержит не верные значение ({val})');
-                $message = '{attribute} содержит не верные значение ({val})';
+               $message = $this->errorArray = $this->errorArray !== null ? $this->errorArray : Yii::t('yii','{attribute} содержит не верные значение ({val})');
+
                 $this->addError($object,$attribute, $message, array('val' => $val));
             }
         }
