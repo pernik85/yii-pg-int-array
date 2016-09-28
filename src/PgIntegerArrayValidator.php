@@ -40,4 +40,27 @@ class PgIntegerArrayValidator extends CValidator
             }
         }
     }
+    
+    /**
+     * @param $value проверка на массив целых чисел (int[])
+     * @throws Exception
+     */
+    public function validate($value)
+    {
+        if($this->allowEmpty && $this->isEmpty($value))
+            return;
+
+        if(!is_array($value))
+        {
+            throw new Exception('не являеится массивом');
+        }
+
+        foreach($value as  $val) {
+            if(!is_int($val)){
+                $message = 'массив содержит не верные значение';
+                throw new Exception($message);
+            }
+        }
+    }
+    
 }
