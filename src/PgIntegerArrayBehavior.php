@@ -6,40 +6,57 @@ namespace pernik85\yiiPgIntArray;
 
 class PgIntegerArrayBehavior extends CActiveRecord
 {
-    /**
-     * Преобразует массив PostgreSQL в массив php
-     * 
-     * @param string $string массив элементов в формате PostgreSQL ({1,2,3...})
-     * 
-     * @return array
-     */
-    public function getArray($string)
-    {
-        $string = str_replace(array('{', '}'), '', $string);
-        if (empty($string)) {
-            return null;
+
+    private $arrayAttributes = null;
+
+    public function init(){
+        if(!$this->arrayAttributes){
+            foreach($this->getValidators() as $validator){
+                if(get_class($validator) == 'PgIntegerArrayValidator' ){
+                    $this->arrayAttributes = $validator->attributes;
+                    break;
+                }
+            }
         }
-        $string = str_replace(array("'", '"'), '', $string);
-        $array = explode(',', $string);
-        return $array;
-    }
-    /**
-     * Преобразует  массив php в массив PostgreSQL
-     *
-     * @param  array $array
-     *
-     * @return string
-     */
-    public function getStringFromArray($array)
-    {
-        $stringArray = null;
-        if (is_array($array) && count($array) > 0) {
-            $stringArray = '{' . join(",", array_map(function($v){
-                    return is_int($v) ? $v : "'".$v."'";
-                },$array)) . '}';
-        }
-        return $stringArray;
     }
 
+    /**
+     * Преобразует  массив php в массив PostgreSQL перед сохранением
+     * @return bool
+     */
+    public function beforeSave(){
+        if(parent::beforeSave()){
+            foreach($this->arrayAttributes as $nameAttribute){
+                $this->$nameAttribute = '{' . join(",", $this->$nameAttribute) . '}';
+            }
+            return true;
+        }
+        return false;
+    }
 
+    /**
+     * Преобразует массив PostgreSQL в массив php после сохранения
+     */
+    public function afterSave(){
+        $this->stringToArray();
+        parent::afterSave();
+    }
+
+    /**
+     * Преобразует массив PostgreSQL в массив php после поиска
+     */
+    public function afterFind(){
+        $this->stringToArray();
+        parent::afterFind();
+    }
+
+    /**
+     *Преобразует массив PostgreSQL в массив php
+     */
+    private function stringToArray(){
+        foreach($this->arrayAttributes as $nameAttribute){
+            $this->$nameAttribute = str_replace(array('{', '}'), '', $this->$nameAttribute);
+            $this->$nameAttribute = explode(',', $this->$nameAttribute);
+        }
+    }
 }
