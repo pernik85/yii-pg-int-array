@@ -1,7 +1,14 @@
 <?php
 
-use pernik85\yiiPgIntArray\PgIntegerArrayBehavior;
+//use pernik85\yiiPgIntArray\PgIntegerArrayBehavior;
+include 'src/PgIntegerArrayBehavior.php';
+class CRequiredValidator {
+    public $attributes = array('id');
+}
 
+class PgIntegerArrayValidator  {
+    public $attributes = array('parent_ids');
+}
 class PgIntegerArrayBehaviorTest extends PHPUnit_Framework_TestCase
 {
 
@@ -9,14 +16,19 @@ class PgIntegerArrayBehaviorTest extends PHPUnit_Framework_TestCase
 
     protected function setUp(){
         $this->pgIntegerArrayBehaviorMock = $this->getMockBuilder('PgIntegerArrayBehavior')
-            ->setMethods(array('addError'))
+            ->setMethods(array('addError', 'getValidators'))
             ->getMock();
     }
     /**
      * @dataProvider provider_getArray_goodParams
      */
-    public function test_getArray_goodParams($string, $expectedResponse){
-        $this->assertEquals($expectedResponse, $this->pgIntegerArrayBehaviorMock->getArray($string));
+    public function test_init($string, $expectedResponse){
+        $dataValidators[] = new CRequiredValidator();
+        $dataValidators[] = new PgIntegerArrayValidator();
+        $this->pgIntegerArrayBehaviorMock->expects($this->once())
+            ->method('getValidators')
+            ->will($this->returnValue($dataValidators));
+        $this->assertAttributeLessThan('sfs', 'arrayAttributes',$this->pgIntegerArrayBehaviorMock->init() );
     }
 
     public function provider_getArray_goodParams(){

@@ -1,14 +1,18 @@
 <?php
-namespace pernik85\yiiPgIntArray;
+//namespace pernik85\yiiPgIntArray;
 /**
  * Class yiiPgIntArrayActiveRecord росширяет CActiveRecord для работы с int[] PostgreSQL
  */
 
-class PgIntegerArrayBehavior extends CActiveRecord
+class PgIntegerArrayBehavior //extends CActiveRecord
 {
 
-    private $arrayAttributes = null;
+    public $arrayAttributes = null;
 
+
+    public function init1(){
+        $this->arrayAttributes = 'sfs';
+    }
     public function init(){
         if(!$this->arrayAttributes){
             foreach($this->getValidators() as $validator){
@@ -17,6 +21,7 @@ class PgIntegerArrayBehavior extends CActiveRecord
                     break;
                 }
             }
+//            var_dump($this->arrayAttributes);
         }
     }
 
@@ -51,7 +56,7 @@ class PgIntegerArrayBehavior extends CActiveRecord
     }
 
     /**
-     *Преобразует массив PostgreSQL в массив php
+     * Преобразует массив PostgreSQL в массив php
      */
     private function stringToArray(){
         foreach($this->arrayAttributes as $nameAttribute){
