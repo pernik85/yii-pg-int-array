@@ -34,10 +34,33 @@ class PgIntegerArrayValidator extends CValidator
 
         foreach($value as  $val) {
             if(!is_int($val)){
-               // $message = $this->errorArray = $this->errorArray !== null ? $this->errorArray : Yii::t('yii','{attribute} содержит не верные значение ({val})');
-                $message = '{attribute} содержит не верные значение ({val})';
+               $message = $this->errorArray = $this->errorArray !== null ? $this->errorArray : Yii::t('yii','{attribute} содержит не верные значение ({val})');
+
                 $this->addError($object,$attribute, $message, array('val' => $val));
             }
         }
     }
+    
+    /**
+     * @param $value проверка на массив целых чисел (int[])
+     * @throws Exception
+     */
+    public function validate($value)
+    {
+        if($this->allowEmpty && $this->isEmpty($value))
+            return;
+
+        if(!is_array($value))
+        {
+            throw new Exception('не являеится массивом');
+        }
+
+        foreach($value as  $val) {
+            if(!is_int($val)){
+                $message = 'массив содержит не верные значение';
+                throw new Exception($message);
+            }
+        }
+    }
+    
 }
