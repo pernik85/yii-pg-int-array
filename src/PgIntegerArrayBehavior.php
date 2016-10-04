@@ -1,27 +1,22 @@
 <?php
-//namespace pernik85\yiiPgIntArray;
+namespace pernik85\yiiPgIntArray;
 /**
  * Class yiiPgIntArrayActiveRecord росширяет CActiveRecord для работы с int[] PostgreSQL
  */
 
-class PgIntegerArrayBehavior //extends CActiveRecord
+class PgIntegerArrayBehavior extends CActiveRecord
 {
 
     public $arrayAttributes = null;
 
-
-    public function init1(){
-        $this->arrayAttributes = 'sfs';
-    }
     public function init(){
         if(!$this->arrayAttributes){
             foreach($this->getValidators() as $validator){
-                if(get_class($validator) == 'PgIntegerArrayValidator' ){
+                if(get_class($validator) == 'PgIntegerArrayValidator'){
                     $this->arrayAttributes = $validator->attributes;
                     break;
                 }
             }
-//            var_dump($this->arrayAttributes);
         }
     }
 
@@ -30,6 +25,7 @@ class PgIntegerArrayBehavior //extends CActiveRecord
      * @return bool
      */
     public function beforeSave(){
+
         if(parent::beforeSave()){
             foreach($this->arrayAttributes as $nameAttribute){
                 $this->$nameAttribute = '{' . join(",", $this->$nameAttribute) . '}';
