@@ -32,13 +32,12 @@ class PgIntegerArrayValidator extends CValidator
             return;
         }
 
-        foreach($value as  $val) {
-            if(!is_int($val)){
-               $message = $this->errorArray = $this->errorArray !== null ? $this->errorArray : Yii::t('yii','{attribute} содержит не верные значение ({val})');
+        if(!$this->validate($value)){
+            $message = $this->errorArray = $this->errorArray !== null ? $this->errorArray : Yii::t('yii','{attribute} содержит не верные значение');
 
-                $this->addError($object,$attribute, $message, array('val' => $val));
-            }
+            $this->addError($object,$attribute, $message);
         }
+
     }
     
     /**
@@ -47,20 +46,15 @@ class PgIntegerArrayValidator extends CValidator
      */
     public function validate($value)
     {
-        if($this->allowEmpty && $this->isEmpty($value))
-            return;
-
-        if(!is_array($value))
-        {
-            throw new Exception('не являеится массивом');
+        if(!is_array($value) || empty($value)){
+            return false;
         }
-
         foreach($value as  $val) {
             if(!is_int($val)){
-                $message = 'массив содержит не верные значение';
-                throw new Exception($message);
+                return false;
             }
         }
+        return true;
     }
     
 }

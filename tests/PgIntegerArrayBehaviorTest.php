@@ -5,16 +5,7 @@ use pernik85\yiiPgIntArray\PgIntegerArrayBehavior;
 /**
  * Class CRequiredValidator нужен для теста
  */
-class CRequiredValidator {
-    public $attributes = array('id');
-}
 
-/**
- * Class PgIntegerArrayValidator нужен для теста
- */
-class PgIntegerArrayValidator  {
-    public $attributes = array('parent_ids', 'afterSave');
-}
 class PgIntegerArrayBehaviorTest extends PHPUnit_Framework_TestCase
 {
 
@@ -22,18 +13,8 @@ class PgIntegerArrayBehaviorTest extends PHPUnit_Framework_TestCase
 
     protected function setUp(){
         $this->pgIntegerArrayBehaviorMock = $this->getMockBuilder('PgIntegerArrayBehavior')
-            ->setMethods(array('addError', 'getValidators'))
+            ->setMethods(array('stringToArray'))
             ->getMock();
-    }
-
-    public function test_init(){
-        $dataValidators[0] = new CRequiredValidator();
-        $dataValidators[1] = new PgIntegerArrayValidator();
-        $this->pgIntegerArrayBehaviorMock->expects($this->once())
-            ->method('getValidators')
-            ->will($this->returnValue($dataValidators));
-        $this->pgIntegerArrayBehaviorMock->init();
-        $this->assertAttributeEquals($dataValidators[1]->attributes, 'arrayAttributes', $this->pgIntegerArrayBehaviorMock);
     }
 
     public function provider_getArrays(){
@@ -48,13 +29,11 @@ class PgIntegerArrayBehaviorTest extends PHPUnit_Framework_TestCase
      */
     public function test_afterSave($arrayPostgre, $expected){
         $arrayAttributes = array('parent_ids');
-        $dataValidators = new PgIntegerArrayValidator();
-        $dataValidators->$arrayAttributes[0] = $arrayPostgre;
         $this->pgIntegerArrayBehaviorMock->arrayAttributes = $arrayAttributes;
-        $this->pgIntegerArrayBehaviorMock->parent_ids = $arrayPostgre;
-        $this->pgIntegerArrayBehaviorMock->afterSave();
+        $this->pgIntegerArrayBehaviorMock->owner = (object)array('parent_ids' => $arrayPostgre);
 
-        $this->assertAttributeEquals($expected, 'parent_ids', $this->pgIntegerArrayBehaviorMock);
+        $this->pgIntegerArrayBehaviorMock->afterSave((object)array());
+        $this->assertAttributeEquals($expected, 'parent_ids', $this->pgIntegerArrayBehaviorMock->owner);
     }
 
     /**
@@ -62,13 +41,11 @@ class PgIntegerArrayBehaviorTest extends PHPUnit_Framework_TestCase
      */
     public function test_afterFind($arrayPostgre, $expected){
         $arrayAttributes = array('parent_ids');
-        $dataValidators = new PgIntegerArrayValidator();
-        $dataValidators->$arrayAttributes[0] = $arrayPostgre;
         $this->pgIntegerArrayBehaviorMock->arrayAttributes = $arrayAttributes;
-        $this->pgIntegerArrayBehaviorMock->parent_ids = $arrayPostgre;
-        $this->pgIntegerArrayBehaviorMock->afterFind();
+        $this->pgIntegerArrayBehaviorMock->owner = (object)array('parent_ids' => $arrayPostgre);
 
-        $this->assertAttributeEquals($expected, 'parent_ids', $this->pgIntegerArrayBehaviorMock);
+        $this->pgIntegerArrayBehaviorMock->afterFind((object)array());
+        $this->assertAttributeEquals($expected, 'parent_ids', $this->pgIntegerArrayBehaviorMock->owner);
     }
 
     /**
@@ -76,13 +53,11 @@ class PgIntegerArrayBehaviorTest extends PHPUnit_Framework_TestCase
      */
     public function test_getStringFromArray_goodParams($arrayPhp, $expected){
         $arrayAttributes = array('parent_ids');
-        $dataValidators = new PgIntegerArrayValidator();
-        $dataValidators->$arrayAttributes[0] = $arrayPhp;
         $this->pgIntegerArrayBehaviorMock->arrayAttributes = $arrayAttributes;
-        $this->pgIntegerArrayBehaviorMock->parent_ids = $arrayPhp;
+        $this->pgIntegerArrayBehaviorMock->owner = (object)array('parent_ids' => $arrayPhp);
 
-        $this->assertTrue($this->pgIntegerArrayBehaviorMock->beforeSave());
-        $this->assertAttributeEquals($expected, 'parent_ids', $this->pgIntegerArrayBehaviorMock);
+        $this->pgIntegerArrayBehaviorMock->beforeSave((object)array());
+        $this->assertAttributeEquals($expected, 'parent_ids', $this->pgIntegerArrayBehaviorMock->owner);
 
     }
 

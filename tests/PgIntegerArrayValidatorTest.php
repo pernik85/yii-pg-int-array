@@ -32,8 +32,8 @@ class PgIntegerArrayValidatorTest extends PHPUnit_Framework_TestCase{
     public function provider_pgIntegerArrayValidator_badParams(){
         return array(
             array(167, '{attribute} должен быть массивом'),
-            array(array(0,'91'), '{attribute} содержит не верные значение ({val})'),
-            array(array(0,91,"hello world"), '{attribute} содержит не верные значение ({val})')
+            array(array(0,'91'), '{attribute} содержит не верные значение'),
+            array(array(0,91,"hello world"), '{attribute} содержит не верные значение')
         );
     }
 
@@ -81,23 +81,18 @@ class PgIntegerArrayValidatorTest extends PHPUnit_Framework_TestCase{
     /**
      * @dataProvider provider_validate_badParams
      */
-    public function test_validate_badParams($val, $exceptionMessage){
-
-        $this->PgIntegerArrayValidatorMock->expects($this->once())
-            ->method('isEmpty')
-            ->with($this->equalTo($val))
-            ->will($this->returnValue(false));
-
-        $this->setExpectedException('Exception', $exceptionMessage);
-
-       $this->PgIntegerArrayValidatorMock->validate($val);
+    public function test_validate_badParams($val){
+       $this->assertFalse($this->PgIntegerArrayValidatorMock->validate($val));
     }
 
 
     public function provider_validate_badParams(){
         return array(
-            array(159, 'не являеится массивом'),
-            array(array(0, 15, '91'), 'массив содержит не верные значение'),
+            array(159),
+            array('массив содержит не верные значение'),
+            array(array('hello:)')),
+            array(''),
+            array(array())
         );
     }
 
@@ -105,14 +100,7 @@ class PgIntegerArrayValidatorTest extends PHPUnit_Framework_TestCase{
      * @dataProvider provider_validate_goodParams
      */
     public function test_validate_goodParams($val){
-
-        $this->PgIntegerArrayValidatorMock->expects($this->once())
-            ->method('isEmpty')
-            ->with($this->equalTo($val))
-            ->will($this->returnValue(false));
-
-
-       $this->PgIntegerArrayValidatorMock->validate($val);
+       $this->assertTrue($this->PgIntegerArrayValidatorMock->validate($val));
     }
 
     public function provider_validate_goodParams(){
@@ -121,26 +109,4 @@ class PgIntegerArrayValidatorTest extends PHPUnit_Framework_TestCase{
             array(array(0, 15, 91)),
         );
     }
-
-    /**
-     * @dataProvider provider_validate_emptyParams
-     */
-    public function test_validate_emptyParams($val){
-
-        $this->PgIntegerArrayValidatorMock->expects($this->once())
-            ->method('isEmpty')
-            ->with($this->equalTo($val))
-            ->will($this->returnValue(true));
-
-
-       $this->PgIntegerArrayValidatorMock->validate($val);
-    }
-
-    public function provider_validate_emptyParams(){
-        return array(
-            array(array()),
-            array(''),
-        );
-    }
-
 }

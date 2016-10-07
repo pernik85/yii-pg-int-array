@@ -4,60 +4,50 @@ namespace pernik85\yiiPgIntArray;
  * Class yiiPgIntArrayActiveRecord росширяет CActiveRecord для работы с int[] PostgreSQL
  */
 
-class PgIntegerArrayBehavior extends CActiveRecord
+class PgIntegerArrayBehavior extends CActiveRecordBehavior
 {
 
+    /**
+     * @var null массив полей котрые
+     */
     public $arrayAttributes = null;
-
-    public function init(){
-        if(!$this->arrayAttributes){
-            foreach($this->getValidators() as $validator){
-                if(get_class($validator) == 'PgIntegerArrayValidator'){
-                    $this->arrayAttributes = $validator->attributes;
-                    break;
-                }
-            }
-        }
-    }
 
     /**
      * Преобразует  массив php в массив PostgreSQL перед сохранением
      * @return bool
      */
-    public function beforeSave(){
-
-        if(parent::beforeSave()){
+    public function beforeSave($event){
+        if(is_array($this->arrayAttributes) && !empty($this->arrayAttributes)){
             foreach($this->arrayAttributes as $nameAttribute){
-                $this->$nameAttribute = '{' . join(",", $this->$nameAttribute) . '}';
+                $this->owner->$nameAttribute = '{' . join(",", $this->owner->$nameAttribute) . '}';
             }
-            return true;
         }
-        return false;
     }
 
     /**
      * Преобразует массив PostgreSQL в массив php после сохранения
      */
-    public function afterSave(){
+    public function afterSave($event){
         $this->stringToArray();
-        parent::afterSave();
+        return true;
     }
 
     /**
      * Преобразует массив PostgreSQL в массив php после поиска
      */
-    public function afterFind(){
+    public function afterFind($event){
         $this->stringToArray();
-        parent::afterFind();
     }
 
     /**
      * Преобразует массив PostgreSQL в массив php
      */
     private function stringToArray(){
-        foreach($this->arrayAttributes as $nameAttribute){
-            $this->$nameAttribute = str_replace(array('{', '}'), '', $this->$nameAttribute);
-            $this->$nameAttribute = explode(',', $this->$nameAttribute);
+        if(is_array($this->arrayAttributes) && !empty($this->arrayAttributes)) {
+            foreach ($this->arrayAttributes as $nameAttribute) {
+                $attribute = str_replace(array('{', '}'), '', $this->owner->$nameAttribute);
+                $this->owner->$nameAttribute = explode(',', $attribute);
+            }
         }
     }
 }
