@@ -8,7 +8,7 @@ class PgIntegerArrayBehavior extends CActiveRecordBehavior
 {
 
     /**
-     * @var null массив полей котрые
+     * @var null массив полей
      */
     public $arrayAttributes = null;
 
