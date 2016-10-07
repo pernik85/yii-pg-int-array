@@ -14,7 +14,6 @@ class PgIntegerArrayBehavior extends CActiveRecordBehavior
 
     /**
      * Преобразует  массив php в массив PostgreSQL перед сохранением
-     * @return bool
      */
     public function beforeSave($event){
         if(is_array($this->arrayAttributes) && !empty($this->arrayAttributes)){
