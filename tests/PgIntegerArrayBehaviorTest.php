@@ -3,7 +3,7 @@
 use pernik85\yiiPgIntArray\PgIntegerArrayBehavior;
 
 /**
- * Class CRequiredValidator нужен для теста
+ * Class PgIntegerArrayBehaviorTest tests РґР»СЏ PgIntegerArrayBehavior
  */
 
 class PgIntegerArrayBehaviorTest extends PHPUnit_Framework_TestCase
